@@ -1,9 +1,9 @@
 version: "3"
 services:
   node:
-    image: node:16.13.1-alpine
+    build: .
     volumes:
-      - ./:/workspace/app/frontend
+      - .:/workspace/app/frontend
     working_dir: /workspace/app/frontend
     ports:
       - "3000:3000"
