@@ -16,8 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { useCookies } from "react-cookie";
-import Router from "next/router";
+import { signOut, useSession } from "next-auth/react";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -25,7 +24,7 @@ const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const [cookies] = useCookies(["session"]);
+  const { data: session } = useSession();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -33,19 +32,6 @@ const ResponsiveAppBar = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-  };
-
-  const logout = async () => {
-    try {
-      await fetch("http://localhost:8000/api/auth/logout", {
-        method: "POST",
-        mode: "cors",
-        credentials: "include",
-      });
-      Router.reload();
-    } catch {
-      console.log("ログアウトに失敗しました");
-    }
   };
 
   return (
@@ -71,11 +57,11 @@ const ResponsiveAppBar = () => {
             <Button sx={{ my: 2, color: "white", display: "block" }}>
               <SearchIcon fontSize="large" />
             </Button>
-            {cookies.session ? (
+            {session ? (
               <>
                 <Button
                   sx={{ mt: 1.5, mb: 2.5, color: "white" }}
-                  onClick={logout}
+                  onClick={() => signOut()}
                 >
                   <LogoutIcon fontSize="large" />
                 </Button>
@@ -87,7 +73,12 @@ const ResponsiveAppBar = () => {
                     onClick={handleOpenUserMenu}
                     sx={{ mt: 1.5, mb: 2.5 }}
                   >
-                    <Avatar src="https://source.unsplash.com/bIhpiQA009k" />
+                    <Avatar
+                      src={
+                        session.user?.image ||
+                        "https://placehold.jp/150x150.png"
+                      }
+                    />
                   </IconButton>
                 </Tooltip>
                 <Menu

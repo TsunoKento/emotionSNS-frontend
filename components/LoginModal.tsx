@@ -1,6 +1,7 @@
 import { Box, Button, Modal } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { FC, useState } from "react";
+import { signIn } from "next-auth/react";
 
 const style = {
   position: "absolute" as const,
@@ -34,8 +35,8 @@ export const LoginModal: FC = ({ children }) => {
         <Box sx={style}>
           <Button
             variant="contained"
-            href="http://localhost:8000/api/auth/google"
             startIcon={<GoogleIcon />}
+            onClick={() => signIn("google")}
           >
             Sign in with Google for Backend
           </Button>
