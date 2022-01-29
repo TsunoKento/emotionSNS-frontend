@@ -16,8 +16,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { useCookies } from "react-cookie";
-import Router from "next/router";
+import { UserContext } from "../pages/_app";
+import { useRouter } from "next/router";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -25,7 +25,8 @@ const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const [cookies] = useCookies(["session"]);
+  const currentUser = React.useContext(UserContext);
+  const router = useRouter();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -35,16 +36,16 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(null);
   };
 
-  const logout = async () => {
+  const signOutGoogle = async () => {
     try {
-      await fetch("http://localhost:8000/api/auth/logout", {
+      const res = await fetch("http://localhost:8000/api/auth/logout", {
         method: "POST",
-        mode: "cors",
         credentials: "include",
       });
-      Router.reload();
-    } catch {
-      console.log("ログアウトに失敗しました");
+      const data = await res.json();
+      router.reload();
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -71,11 +72,11 @@ const ResponsiveAppBar = () => {
             <Button sx={{ my: 2, color: "white", display: "block" }}>
               <SearchIcon fontSize="large" />
             </Button>
-            {cookies.session ? (
+            {currentUser?.userId ? (
               <>
                 <Button
                   sx={{ mt: 1.5, mb: 2.5, color: "white" }}
-                  onClick={logout}
+                  onClick={signOutGoogle}
                 >
                   <LogoutIcon fontSize="large" />
                 </Button>
@@ -87,7 +88,11 @@ const ResponsiveAppBar = () => {
                     onClick={handleOpenUserMenu}
                     sx={{ mt: 1.5, mb: 2.5 }}
                   >
-                    <Avatar src="https://source.unsplash.com/bIhpiQA009k" />
+                    <Avatar
+                      src={
+                        currentUser?.image || "https://placehold.jp/150x150.png"
+                      }
+                    />
                   </IconButton>
                 </Tooltip>
                 <Menu

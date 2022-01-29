@@ -63,7 +63,7 @@ export const PostModal: React.FC = ({ children }) => {
 
   const postDataForm: SubmitHandler<inputData> = (data) => {
     data["emotions"] = checkList;
-    fetch("/api/addPost", {
+    fetch("http://localhost:8000/api/addPost", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

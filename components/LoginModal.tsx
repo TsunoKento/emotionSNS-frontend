@@ -34,10 +34,10 @@ export const LoginModal: FC = ({ children }) => {
         <Box sx={style}>
           <Button
             variant="contained"
-            href="http://localhost:8000/api/auth/google"
             startIcon={<GoogleIcon />}
+            href="http://localhost:8000/api/auth/google"
           >
-            Sign in with Google for Backend
+            Login with Google
           </Button>
         </Box>
       </Modal>
