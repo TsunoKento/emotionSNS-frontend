@@ -1,12 +1,26 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { SessionProvider } from "next-auth/react";
+import { createContext } from "react";
+import useSWR from "swr";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+export const UserContext = createContext({
+  userId: "",
+  name: "",
+  image: "",
+});
+
+function MyApp({ Component, pageProps }: AppProps) {
+  const url = "http://localhost:8000/api/user/currentuser";
+  const fetcher = () =>
+    fetch(url, { method: "POST", credentials: "include" }).then((res) =>
+      res.json()
+    );
+  //swr
+  const { data } = useSWR(url, fetcher);
   return (
-    <SessionProvider session={session}>
+    <UserContext.Provider value={data}>
       <Component {...pageProps} />
-    </SessionProvider>
+    </UserContext.Provider>
   );
 }
 

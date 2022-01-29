@@ -16,7 +16,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { signOut, useSession } from "next-auth/react";
+import { UserContext } from "../pages/_app";
+import { useRouter } from "next/router";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -24,7 +25,8 @@ const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const { data: session } = useSession();
+  const currentUser = React.useContext(UserContext);
+  const router = useRouter();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -32,6 +34,19 @@ const ResponsiveAppBar = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const signOutGoogle = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      router.reload();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -57,11 +72,11 @@ const ResponsiveAppBar = () => {
             <Button sx={{ my: 2, color: "white", display: "block" }}>
               <SearchIcon fontSize="large" />
             </Button>
-            {session ? (
+            {currentUser?.userId ? (
               <>
                 <Button
                   sx={{ mt: 1.5, mb: 2.5, color: "white" }}
-                  onClick={() => signOut()}
+                  onClick={signOutGoogle}
                 >
                   <LogoutIcon fontSize="large" />
                 </Button>
@@ -75,8 +90,7 @@ const ResponsiveAppBar = () => {
                   >
                     <Avatar
                       src={
-                        session.user?.image ||
-                        "https://placehold.jp/150x150.png"
+                        currentUser?.image || "https://placehold.jp/150x150.png"
                       }
                     />
                   </IconButton>
