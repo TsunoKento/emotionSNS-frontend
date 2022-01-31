@@ -38,7 +38,7 @@ const ResponsiveAppBar = () => {
 
   const signOutGoogle = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/auth/logout", {
+      const res = await fetch("http://localhost:8000/user/logout", {
         method: "POST",
         credentials: "include",
       });

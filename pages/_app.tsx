@@ -10,7 +10,7 @@ export const UserContext = createContext({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const url = "http://localhost:8000/api/user/currentuser";
+  const url = "http://localhost:8000/user/loginUser";
   const fetcher = () =>
     fetch(url, { method: "POST", credentials: "include" }).then((res) =>
       res.json()

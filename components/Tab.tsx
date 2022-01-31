@@ -54,7 +54,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 //fetcherの定義
-const url = "http://localhost:8000/api/postAll";
+const url = "http://localhost:8000/post/all";
 const fetcher = () => fetch(url).then((res) => res.json());
 
 export default function IconLabelTabs() {
