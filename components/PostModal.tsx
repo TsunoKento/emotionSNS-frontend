@@ -3,11 +3,12 @@ import {
   AlertColor,
   Box,
   Button,
-  Checkbox,
   IconButton,
   Modal,
   Snackbar,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
@@ -19,13 +20,12 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 type inputData = {
   content: string;
-  emotions: number;
+  emotion: number;
 };
 
 export const PostModal: React.FC = ({ children }) => {
   const [open, setOpen] = React.useState(false);
-  const { control, handleSubmit, resetField } = useForm();
-  const [checkList, setCheckList] = React.useState<number[]>([]);
+  const { control, handleSubmit, resetField } = useForm<inputData>();
   const [severity, setSeverity] = React.useState<AlertColor>("success");
   const [content, setContent] = React.useState<string>();
   const [snackOpen, setSnackOpen] = React.useState(false);
@@ -34,9 +34,9 @@ export const PostModal: React.FC = ({ children }) => {
   };
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setCheckList([]);
     setOpen(false);
   };
+
   const style = {
     display: "flex",
     alignItems: "flex-end",
@@ -52,17 +52,11 @@ export const PostModal: React.FC = ({ children }) => {
     p: 4,
   };
 
-  const handleCheck = (e: React.ChangeEvent) => {
-    const value = Number((e.target as HTMLInputElement).value);
-    if ((e.target as HTMLInputElement).checked) {
-      setCheckList([...checkList, Number(value)]);
-    } else {
-      setCheckList(checkList.filter((item) => item !== value));
-    }
-  };
-
   const postDataForm: SubmitHandler<inputData> = (data) => {
-    data.emotions = 3;
+    //感情が選択されなかったときは無感情(id: 5)として扱う
+    if (data.emotion == null) {
+      data.emotion = 5;
+    }
     fetch("http://localhost:8000/post/add", {
       method: "POST",
       credentials: "include",
@@ -79,6 +73,7 @@ export const PostModal: React.FC = ({ children }) => {
         setContent("SUCCESS");
         setSnackOpen(true);
         resetField("content");
+        resetField("emotion");
         setOpen(false);
       })
       .catch((error) => {
@@ -130,44 +125,31 @@ export const PostModal: React.FC = ({ children }) => {
             />
             <Box>
               <Controller
-                name="emotions"
-                render={({ field }) => (
-                  <React.Fragment>
-                    <Checkbox
-                      icon={<SentimentVerySatisfiedIcon />}
-                      checkedIcon={
-                        <SentimentVerySatisfiedIcon sx={{ color: "coral" }} />
-                      }
-                      value={1}
-                      onChange={(e) => field.onChange(handleCheck(e))}
-                    />
-                    <Checkbox
-                      icon={<SentimentVeryDissatisfiedIcon />}
-                      checkedIcon={
-                        <SentimentVeryDissatisfiedIcon sx={{ color: "red" }} />
-                      }
-                      value={2}
-                      onChange={(e) => field.onChange(handleCheck(e))}
-                    />
-                    <Checkbox
-                      icon={<SentimentDissatisfiedIcon />}
-                      checkedIcon={
-                        <SentimentDissatisfiedIcon sx={{ color: "blue" }} />
-                      }
-                      value={3}
-                      onChange={(e) => field.onChange(handleCheck(e))}
-                    />
-                    <Checkbox
-                      icon={<SentimentSatisfiedAltIcon />}
-                      checkedIcon={
-                        <SentimentSatisfiedAltIcon sx={{ color: "gold" }} />
-                      }
-                      value={4}
-                      onChange={(e) => field.onChange(handleCheck(e))}
-                    />
-                  </React.Fragment>
-                )}
+                name="emotion"
                 control={control}
+                render={({ field: { value, onChange } }) => (
+                  <ToggleButtonGroup
+                    value={value}
+                    exclusive
+                    onChange={(e, value) => {
+                      onChange(value);
+                    }}
+                    aria-label="感情"
+                  >
+                    <ToggleButton value={1} aria-label="happy">
+                      <SentimentVerySatisfiedIcon sx={{ color: "coral" }} />
+                    </ToggleButton>
+                    <ToggleButton value={2} aria-label="angry">
+                      <SentimentVeryDissatisfiedIcon sx={{ color: "red" }} />
+                    </ToggleButton>
+                    <ToggleButton value={3} aria-label="sad">
+                      <SentimentDissatisfiedIcon sx={{ color: "blue" }} />
+                    </ToggleButton>
+                    <ToggleButton value={4} aria-label="funny">
+                      <SentimentSatisfiedAltIcon sx={{ color: "gold" }} />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                )}
               />
             </Box>
             <IconButton color="primary" type="submit">
