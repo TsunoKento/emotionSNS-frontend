@@ -19,7 +19,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 type inputData = {
   content: string;
-  emotions: number[];
+  emotions: number;
 };
 
 export const PostModal: React.FC = ({ children }) => {
@@ -62,9 +62,10 @@ export const PostModal: React.FC = ({ children }) => {
   };
 
   const postDataForm: SubmitHandler<inputData> = (data) => {
-    data["emotions"] = checkList;
+    data.emotions = 3;
     fetch("http://localhost:8000/post/add", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
