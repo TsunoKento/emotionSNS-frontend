@@ -6,52 +6,50 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import Typography from "@mui/material/Typography";
 import { Avatar, CardHeader, CardMedia, IconButton } from "@mui/material";
 import { VFC } from "react";
+import { PostData } from "./Tab";
 
 type props = {
-  user: {
-    id: string;
-    name: string;
-    image?: string;
-  };
-  post: {
-    image?: string;
-    date: string;
-    content: string;
-    like: number;
-  };
-  tags?: string[];
+  postData: PostData;
+};
+
+const formatDate = (date: Date) => {
+  const publishDate = new Date(date);
+  const yyyy = publishDate.getFullYear();
+  const mm = ("00" + (publishDate.getMonth() + 1)).slice(-2);
+  const dd = ("00" + publishDate.getDate()).slice(-2);
+  const hh = ("00" + publishDate.getHours()).slice(-2);
+  const mi = ("00" + publishDate.getMinutes()).slice(-2);
+  const ss = ("00" + publishDate.getSeconds()).slice(-2);
+  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
 };
 
 export const OutlineCard: VFC<props> = (props) => {
-  const { user, post, tags } = props;
+  const { postData } = props;
   return (
     <Box>
       <Card variant="outlined">
         <CardHeader
-          avatar={<Avatar src={user.image} alt={user.id} />}
-          title={user.name}
-          subheader={post.date}
+          avatar={<Avatar src={postData.userImage} alt="ユーザー画像" />}
+          title={postData.name}
+          subheader={formatDate(postData.publishedAt)}
         />
-        {post.image && (
+        {postData.postImage && (
           <CardMedia
             component="img"
             height="194"
-            image={post.image}
-            alt="Paella dish"
+            image={postData.postImage}
+            alt="投稿画像"
           />
         )}
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            {post.content}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {tags && tags.map((tag: string) => tag)}
+            {postData.content}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
           <IconButton aria-label="add to favorites">
             <FavoriteIcon />
-            {post.like}
+            {postData.likeCount}
           </IconButton>
         </CardActions>
       </Card>

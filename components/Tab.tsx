@@ -16,21 +16,16 @@ interface TabPanelProps {
   value: number;
 }
 
-type PostData = {
-  type: number;
-  user: {
-    id: string;
-    name: string;
-    image?: string;
-  };
-  post: {
-    id: string;
-    image?: string;
-    date: string;
-    content: string;
-    like: number;
-  };
-  tags?: string[];
+export type PostData = {
+  postId: number;
+  content: string;
+  postImage?: string;
+  publishedAt: Date;
+  emotionId: number;
+  userId: string;
+  name: string;
+  userImage: string;
+  likeCount: number;
 };
 
 function TabPanel(props: TabPanelProps) {
@@ -102,71 +97,36 @@ export default function IconLabelTabs() {
       </Tabs>
       <TabPanel value={value} index={0}>
         {data.map((postData: PostData) => {
-          if (postData.type === 0) {
-            return (
-              <OutlineCard
-                key={postData.post.id}
-                user={postData.user}
-                post={postData.post}
-                tags={postData.tags}
-              />
-            );
+          if (postData.emotionId === 1) {
+            return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={1}>
         {data.map((postData: PostData) => {
-          if (postData.type === 1) {
-            return (
-              <OutlineCard
-                key={postData.post.id}
-                user={postData.user}
-                post={postData.post}
-                tags={postData.tags}
-              />
-            );
+          if (postData.emotionId === 2) {
+            return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={2}>
         {data.map((postData: PostData) => {
-          if (postData.type === 2) {
-            return (
-              <OutlineCard
-                key={postData.post.id}
-                user={postData.user}
-                post={postData.post}
-                tags={postData.tags}
-              />
-            );
+          if (postData.emotionId === 3) {
+            return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={3}>
         {data.map((postData: PostData) => {
-          if (postData.type === 3) {
-            return (
-              <OutlineCard
-                key={postData.post.id}
-                user={postData.user}
-                post={postData.post}
-                tags={postData.tags}
-              />
-            );
+          if (postData.emotionId === 4) {
+            return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={4}>
         {data.map((postData: PostData) => {
-          if (postData.type === 4) {
-            return (
-              <OutlineCard
-                key={postData.post.id}
-                user={postData.user}
-                post={postData.post}
-                tags={postData.tags}
-              />
-            );
+          if (postData.emotionId === 5) {
+            return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
