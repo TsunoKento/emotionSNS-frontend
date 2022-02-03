@@ -25,6 +25,7 @@ export type PostData = {
   userId: string;
   name: string;
   userImage: string;
+  likeFlag: boolean;
   likeCount: number;
 };
 
@@ -50,7 +51,10 @@ function TabPanel(props: TabPanelProps) {
 
 //fetcherの定義
 const url = "http://localhost:8000/post/all";
-const fetcher = () => fetch(url).then((res) => res.json());
+const fetcher = () =>
+  fetch(url, {
+    credentials: "include",
+  }).then((res) => res.json());
 
 export default function IconLabelTabs() {
   const [value, setValue] = React.useState(0);

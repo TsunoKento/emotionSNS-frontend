@@ -2,11 +2,21 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Typography from "@mui/material/Typography";
-import { Avatar, CardHeader, CardMedia, IconButton } from "@mui/material";
-import { VFC } from "react";
+import {
+  Alert,
+  Avatar,
+  CardHeader,
+  CardMedia,
+  IconButton,
+  Snackbar,
+} from "@mui/material";
+import { useContext, useState, VFC } from "react";
 import { PostData } from "./Tab";
+import { UserContext } from "../pages/_app";
+import { LoginModal } from "./LoginModal";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 type props = {
   postData: PostData;
@@ -25,8 +35,49 @@ const formatDate = (date: Date) => {
 
 export const OutlineCard: VFC<props> = (props) => {
   const { postData } = props;
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [likeCount, setLikeCount] = useState(postData.likeCount);
+  const [likeFlag, setLikeFlag] = useState(postData.likeFlag);
+  const currentUser = useContext(UserContext);
+
+  const snackClose = () => {
+    setSnackOpen(false);
+  };
+  const showAlert = () => {
+    setSnackOpen(true);
+  };
+  const toggleLike = async () => {
+    //いいねでなって欲しい値を送る(いいねついていたら外す、いいねついていなかったら付ける)
+    const req = { like: !likeFlag, postId: postData.postId };
+    try {
+      await fetch("http://localhost:8000/like", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+      });
+      if (likeFlag) {
+        setLikeCount(likeCount - 1);
+      } else {
+        setLikeCount(likeCount + 1);
+      }
+      setLikeFlag(!likeFlag);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <Box>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={6000}
+        onClose={snackClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="info">いいね機能の利用にはログインが必要です</Alert>
+      </Snackbar>
       <Card variant="outlined">
         <CardHeader
           avatar={<Avatar src={postData.userImage} alt="ユーザー画像" />}
@@ -47,10 +98,26 @@ export const OutlineCard: VFC<props> = (props) => {
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-            {postData.likeCount}
-          </IconButton>
+          {currentUser?.userId ? (
+            likeFlag ? (
+              <IconButton aria-label="add to favorites" onClick={toggleLike}>
+                <FavoriteIcon />
+                {likeCount}
+              </IconButton>
+            ) : (
+              <IconButton aria-label="add to favorites" onClick={toggleLike}>
+                <FavoriteBorderIcon />
+                {likeCount}
+              </IconButton>
+            )
+          ) : (
+            <LoginModal>
+              <IconButton aria-label="not login" onClick={showAlert}>
+                <FavoriteBorderIcon />
+                {likeCount}
+              </IconButton>
+            </LoginModal>
+          )}
         </CardActions>
       </Card>
     </Box>
