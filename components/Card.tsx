@@ -13,10 +13,10 @@ import {
   Snackbar,
 } from "@mui/material";
 import { useContext, useState, VFC } from "react";
-import { UserContext } from "../pages/_app";
 import { LoginModal } from "./LoginModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Post } from "../types/post";
+import { useLoginUser } from "../hooks/useLoginUser";
 
 type props = {
   postData: Post;
@@ -38,7 +38,7 @@ export const OutlineCard: VFC<props> = (props) => {
   const [snackOpen, setSnackOpen] = useState(false);
   const [likeCount, setLikeCount] = useState(postData.likeCount);
   const [likeFlag, setLikeFlag] = useState(postData.likeFlag);
-  const currentUser = useContext(UserContext);
+  const { loginUser } = useLoginUser();
 
   const snackClose = () => {
     setSnackOpen(false);
@@ -98,7 +98,7 @@ export const OutlineCard: VFC<props> = (props) => {
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          {currentUser?.userId ? (
+          {loginUser?.userId ? (
             likeFlag ? (
               <IconButton aria-label="add to favorites" onClick={toggleLike}>
                 <FavoriteIcon />

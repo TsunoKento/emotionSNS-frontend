@@ -16,9 +16,9 @@ import MenuItem from "@mui/material/MenuItem";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { UserContext } from "../pages/_app";
 import { useRouter } from "next/router";
 import { SnackbarContext } from "../contexts/SnackbarContext";
+import { useLoginUser } from "../hooks/useLoginUser";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -26,7 +26,8 @@ const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const currentUser = React.useContext(UserContext);
+
+  const { loginUser } = useLoginUser();
   const router = useRouter();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -82,7 +83,7 @@ const ResponsiveAppBar = () => {
             >
               <SearchIcon fontSize="large" />
             </Button>
-            {currentUser?.userId ? (
+            {loginUser?.userId ? (
               <>
                 <Button
                   sx={{ mt: 1.5, mb: 2.5, color: "white" }}
@@ -100,7 +101,7 @@ const ResponsiveAppBar = () => {
                   >
                     <Avatar
                       src={
-                        currentUser?.image || "https://placehold.jp/150x150.png"
+                        loginUser?.image || "https://placehold.jp/150x150.png"
                       }
                     />
                   </IconButton>
