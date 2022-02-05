@@ -1,11 +1,8 @@
 import {
-  Alert,
-  AlertColor,
   Box,
   Button,
   IconButton,
   Modal,
-  Snackbar,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -15,8 +12,10 @@ import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfi
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
-import React from "react";
+import React, { useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SnackbarContext } from "../contexts/SnackbarContext";
+import { useSWRConfig } from "swr";
 
 type inputData = {
   content: string;
@@ -26,13 +25,9 @@ type inputData = {
 export const PostModal: React.FC = ({ children }) => {
   const [open, setOpen] = React.useState(false);
   const { control, handleSubmit, resetField } = useForm<inputData>();
-  const [severity, setSeverity] = React.useState<AlertColor>("success");
-  const [content, setContent] = React.useState<string>();
-  const [snackOpen, setSnackOpen] = React.useState(false);
-  const snackClose = () => {
-    setSnackOpen(false);
-  };
+  const { setSnackState } = useContext(SnackbarContext);
   const handleOpen = () => setOpen(true);
+  const { mutate } = useSWRConfig();
   const handleClose = () => {
     setOpen(false);
   };
@@ -69,31 +64,24 @@ export const PostModal: React.FC = ({ children }) => {
         if (!response.ok) {
           throw new Error();
         }
-        setSeverity("success");
-        setContent("SUCCESS");
-        setSnackOpen(true);
+        mutate("http://localhost:8000/post/all");
+        setSnackState({
+          isOpen: true,
+          status: "success",
+          message: "success!!",
+        });
         resetField("content");
         resetField("emotion");
         setOpen(false);
       })
       .catch((error) => {
-        setSeverity("error");
-        setContent("ERROR");
-        setSnackOpen(true);
+        setSnackState({ isOpen: true, status: "error", message: "error" });
         console.log(error);
       });
   };
 
   return (
     <React.Fragment>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={6000}
-        onClose={snackClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity={severity}>{content}</Alert>
-      </Snackbar>
       <Button
         onClick={handleOpen}
         sx={{ my: 2, color: "white", display: "block" }}

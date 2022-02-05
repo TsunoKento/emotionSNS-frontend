@@ -16,8 +16,9 @@ import MenuItem from "@mui/material/MenuItem";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { UserContext } from "../pages/_app";
 import { useRouter } from "next/router";
+import { SnackbarContext } from "../contexts/SnackbarContext";
+import { useLoginUser } from "../hooks/useLoginUser";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -25,7 +26,8 @@ const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const currentUser = React.useContext(UserContext);
+
+  const { loginUser } = useLoginUser();
   const router = useRouter();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -49,6 +51,12 @@ const ResponsiveAppBar = () => {
     }
   };
 
+  const { setSnackState } = React.useContext(SnackbarContext);
+  const searchOpen = () => {
+    console.log("検索ボタンを押下しました");
+    setSnackState({ isOpen: true, status: "success", message: "成功" });
+  };
+
   return (
     <AppBar position="static" sx={{ mb: 3 }}>
       <Container maxWidth="xl">
@@ -69,10 +77,13 @@ const ResponsiveAppBar = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Button sx={{ my: 2, color: "white", display: "block" }}>
+            <Button
+              sx={{ my: 2, color: "white", display: "block" }}
+              onClick={searchOpen}
+            >
               <SearchIcon fontSize="large" />
             </Button>
-            {currentUser?.userId ? (
+            {loginUser?.userId ? (
               <>
                 <Button
                   sx={{ mt: 1.5, mb: 2.5, color: "white" }}
@@ -90,7 +101,7 @@ const ResponsiveAppBar = () => {
                   >
                     <Avatar
                       src={
-                        currentUser?.image || "https://placehold.jp/150x150.png"
+                        loginUser?.image || "https://placehold.jp/150x150.png"
                       }
                     />
                   </IconButton>
