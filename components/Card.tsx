@@ -13,13 +13,13 @@ import {
   Snackbar,
 } from "@mui/material";
 import { useContext, useState, VFC } from "react";
-import { PostData } from "./Tab";
 import { UserContext } from "../pages/_app";
 import { LoginModal } from "./LoginModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Post } from "../types/post";
 
 type props = {
-  postData: PostData;
+  postData: Post;
 };
 
 const formatDate = (date: Date) => {

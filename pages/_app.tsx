@@ -2,11 +2,18 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { createContext } from "react";
 import useSWR from "swr";
+import { SnackbarContextProvider } from "../contexts/SnackbarContext";
 
 export const UserContext = createContext({
   userId: "",
   name: "",
   image: "",
+});
+
+export const MessageContext = createContext({
+  open: false,
+  status: "",
+  message: "",
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -18,9 +25,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   //swr
   const { data } = useSWR(url, fetcher);
   return (
-    <UserContext.Provider value={data}>
-      <Component {...pageProps} />
-    </UserContext.Provider>
+    <SnackbarContextProvider>
+      <UserContext.Provider value={data}>
+        <Component {...pageProps} />
+      </UserContext.Provider>
+    </SnackbarContextProvider>
   );
 }
 

@@ -9,25 +9,13 @@ import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import { Box, Typography } from "@mui/material";
 import { OutlineCard } from "./Card";
 import useSWR from "swr";
+import { Post } from "../types/post";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
-
-export type PostData = {
-  postId: number;
-  content: string;
-  postImage?: string;
-  publishedAt: Date;
-  emotionId: number;
-  userId: string;
-  name: string;
-  userImage: string;
-  likeFlag: boolean;
-  likeCount: number;
-};
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -100,35 +88,35 @@ export default function IconLabelTabs() {
         />
       </Tabs>
       <TabPanel value={value} index={0}>
-        {data.map((postData: PostData) => {
+        {data.map((postData: Post) => {
           if (postData.emotionId === 1) {
             return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {data.map((postData: PostData) => {
+        {data.map((postData: Post) => {
           if (postData.emotionId === 2) {
             return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={2}>
-        {data.map((postData: PostData) => {
+        {data.map((postData: Post) => {
           if (postData.emotionId === 3) {
             return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={3}>
-        {data.map((postData: PostData) => {
+        {data.map((postData: Post) => {
           if (postData.emotionId === 4) {
             return <OutlineCard postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={4}>
-        {data.map((postData: PostData) => {
+        {data.map((postData: Post) => {
           if (postData.emotionId === 5) {
             return <OutlineCard postData={postData} />;
           }
