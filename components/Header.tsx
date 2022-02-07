@@ -42,17 +42,19 @@ const ResponsiveAppBar = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ mb: 3 }}>
+    <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ mr: 2, display: "flex" }}
-          >
-            LOGO
-          </Typography>
+          <Link href="/">
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ mr: 2, display: "flex" }}
+            >
+              LOGO
+            </Typography>
+          </Link>
 
           <Box
             sx={{

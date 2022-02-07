@@ -1,8 +1,7 @@
 import { Container } from "@mui/material";
 import type { NextPage } from "next";
 import Head from "next/head";
-import Header from "../components/Header";
-import Tab from "../components/Tab";
+import { IconLabelTabs } from "../components/Tab";
 
 const Home: NextPage = () => {
   return (
@@ -10,9 +9,8 @@ const Home: NextPage = () => {
       <Head>
         <title>emotionSNS</title>
       </Head>
-      <Header />
       <Container>
-        <Tab />
+        <IconLabelTabs userId="" />
       </Container>
     </div>
   );
