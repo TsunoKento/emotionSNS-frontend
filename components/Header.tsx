@@ -21,19 +21,6 @@ import Link from "next/link";
 
 const ResponsiveAppBar = () => {
   const { loginUser } = useLoginUser();
-  const router = useRouter();
-
-  const signOutGoogle = async () => {
-    try {
-      await fetch("http://localhost:8000/user/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      router.reload();
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const { setSnackState } = React.useContext(SnackbarContext);
   const searchOpen = () => {
@@ -71,12 +58,6 @@ const ResponsiveAppBar = () => {
             </Button>
             {loginUser?.userId ? (
               <>
-                <Button
-                  sx={{ mt: 1.5, mb: 2.5, color: "white" }}
-                  onClick={signOutGoogle}
-                >
-                  <LogoutIcon fontSize="large" />
-                </Button>
                 <PostModal>
                   <AddCircleIcon fontSize="large" />
                 </PostModal>

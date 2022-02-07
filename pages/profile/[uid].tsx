@@ -5,13 +5,17 @@ import {
   Container,
   Typography,
 } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR, { Fetcher } from "swr";
+import { SettingModal } from "../../components/SettingModal";
 import { IconLabelTabs } from "../../components/Tab";
+import { useLoginUser } from "../../hooks/useLoginUser";
 import { LoginUser } from "../../types/loginUser";
 
 const Profile: NextPage = () => {
+  const { loginUser } = useLoginUser();
   const router = useRouter();
   const uid = router.query.uid as string;
 
@@ -25,23 +29,30 @@ const Profile: NextPage = () => {
       {!data && !error ? (
         <CircularProgress />
       ) : (
-        <Box
-          sx={{
-            height: 300,
-            backgroundColor: "primary.dark",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Avatar src={data?.image || ""} sx={{ width: 100, height: 100 }} />
-          <Box sx={{ ml: 3 }}>
-            <Typography variant="h4" sx={{ color: "white" }}>
-              {data?.name}
-            </Typography>
-            <Typography variant="h6" sx={{ color: "white" }}>
-              @{data?.userId}
-            </Typography>
+        <Box sx={{ height: 300, backgroundColor: "primary.dark" }}>
+          {data?.userId == loginUser?.userId && (
+            <Container maxWidth="xl">
+              <SettingModal user={data}>
+                <SettingsIcon fontSize="large" />
+              </SettingModal>
+            </Container>
+          )}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Avatar src={data?.image || ""} sx={{ width: 100, height: 100 }} />
+            <Box sx={{ ml: 3 }}>
+              <Typography variant="h4" sx={{ color: "white" }}>
+                {data?.name}
+              </Typography>
+              <Typography variant="h6" sx={{ color: "white" }}>
+                @{data?.userId}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       )}
