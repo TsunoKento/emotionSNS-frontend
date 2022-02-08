@@ -31,7 +31,7 @@ const Profile: NextPage = () => {
       ) : (
         <Box sx={{ height: 300, backgroundColor: "primary.dark" }}>
           {data?.userId == loginUser?.userId && (
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" sx={{ position: "relative" }}>
               <SettingModal user={data}>
                 <SettingsIcon fontSize="large" />
               </SettingModal>
@@ -42,6 +42,7 @@ const Profile: NextPage = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              height: 300,
             }}
           >
             <Avatar src={data?.image || ""} sx={{ width: 100, height: 100 }} />

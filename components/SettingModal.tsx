@@ -98,7 +98,12 @@ export const SettingModal: React.FC<Props> = (props) => {
     <React.Fragment>
       <Button
         onClick={handleOpen}
-        sx={{ mb: 4, ml: "auto", color: "white", display: "block" }}
+        sx={{
+          position: "absolute",
+          right: 20,
+          color: "white",
+          display: "block",
+        }}
       >
         {children}
       </Button>
