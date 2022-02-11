@@ -6,7 +6,6 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import LogoutIcon from "@mui/icons-material/Logout";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,7 +13,6 @@ import Tooltip from "@mui/material/Tooltip";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { useRouter } from "next/router";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
@@ -62,15 +60,13 @@ const ResponsiveAppBar = () => {
                   <AddCircleIcon fontSize="large" />
                 </PostModal>
                 <Link href={`/profile/${loginUser.userId}`}>
-                  <Tooltip title="Open settings">
-                    <IconButton sx={{ mt: 1.5, mb: 2.5 }}>
-                      <Avatar
-                        src={
-                          loginUser?.image || "https://placehold.jp/150x150.png"
-                        }
-                      />
-                    </IconButton>
-                  </Tooltip>
+                  <IconButton sx={{ mt: 1.5, mb: 2.5 }}>
+                    <Avatar
+                      src={
+                        loginUser?.image || "https://placehold.jp/150x150.png"
+                      }
+                    />
+                  </IconButton>
                 </Link>
               </>
             ) : (

@@ -1,6 +1,14 @@
-import { Box, Button, IconButton, Modal, TextField } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Modal,
+  TextField,
+} from "@mui/material";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useSWRConfig } from "swr";
@@ -16,9 +24,11 @@ type Props = {
 };
 
 export const SettingModal: React.FC<Props> = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { user, children } = props;
   const [open, setOpen] = React.useState(false);
   const { control, handleSubmit } = useForm<inputData>();
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { setSnackState } = useContext(SnackbarContext);
   const { mutate } = useSWRConfig();
   const handleOpen = () => setOpen(true);
@@ -64,23 +74,32 @@ export const SettingModal: React.FC<Props> = (props) => {
 
   const postDataForm: SubmitHandler<inputData> = (data) => {
     //何も変更していなければundefinedが送られてくる
-    if (true) {
-      console.log(data);
-      return;
+    setIsLoading(true);
+    type req = {
+      image?: string;
+      name?: string;
+      userId?: string;
+    };
+    const reqData: req = {
+      name: data.name,
+      userId: data.userName,
+    };
+    if (fileUrl) {
+      reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
     }
-    fetch("http://localhost:8000/post/add", {
+    fetch("http://localhost:8000/user/profile/change", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(reqData),
     })
       .then((response) => {
         if (!response.ok) {
           throw new Error();
         }
-        mutate("http://localhost:8000/post/all");
+        mutate(`http://localhost:8000/user/getUser/${user?.userId}`);
         setSnackState({
           isOpen: true,
           status: "success",
@@ -92,6 +111,30 @@ export const SettingModal: React.FC<Props> = (props) => {
         setSnackState({ isOpen: true, status: "error", message: "error" });
         console.log(error);
       });
+    setIsLoading(false);
+  };
+
+  const imageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = event.target.files != null ? event.target.files[0] : null;
+    if (imageFile == null) return;
+    const reader = new FileReader();
+    const img = new Image();
+
+    reader.onload = () => {
+      img.onload = () => {
+        const imgType = img.src.substring(5, img.src.indexOf(";"));
+        const imgWidth = 200;
+        const imgHeight = img.height * (imgWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = imgWidth;
+        canvas.height = imgHeight;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, imgWidth, imgHeight);
+        setFileUrl(canvas.toDataURL(imgType));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(imageFile);
   };
 
   return (
@@ -116,6 +159,24 @@ export const SettingModal: React.FC<Props> = (props) => {
       >
         <form onSubmit={handleSubmit(postDataForm)}>
           <Box sx={style}>
+            <Box sx={{ mx: "auto", mb: 5 }}>
+              <input
+                type="file"
+                accept="image/*"
+                id="avatar-image"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  imageChange(e);
+                }}
+              ></input>
+              <label htmlFor="avatar-image">
+                <Avatar
+                  src={fileUrl || user?.image}
+                  sx={{ width: 100, height: 100 }}
+                />
+              </label>
+            </Box>
+
             <Controller
               name="userName"
               render={({ field }) => (
@@ -137,13 +198,20 @@ export const SettingModal: React.FC<Props> = (props) => {
                   label="NAME"
                   fullWidth
                   defaultValue={user?.name}
+                  sx={{ mb: 2 }}
                 />
               )}
               control={control}
             />
-            <IconButton color="primary" type="submit">
-              <ChangeCircleIcon fontSize="large" />
-            </IconButton>
+            {isLoading ? (
+              <Box sx={{ display: "flex" }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <IconButton color="primary" type="submit">
+                <ChangeCircleIcon fontSize="large" />
+              </IconButton>
+            )}
             <Button
               sx={{
                 mt: 1.5,
