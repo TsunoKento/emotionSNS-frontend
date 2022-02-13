@@ -12,11 +12,12 @@ import {
   IconButton,
   Snackbar,
 } from "@mui/material";
-import { useContext, useState, VFC } from "react";
+import { useState, VFC } from "react";
 import { LoginModal } from "./LoginModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Post } from "../types/post";
 import { useLoginUser } from "../hooks/useLoginUser";
+import Link from "next/link";
 
 type props = {
   postData: Post;
@@ -79,11 +80,13 @@ export const OutlineCard: VFC<props> = (props) => {
         <Alert severity="info">いいね機能の利用にはログインが必要です</Alert>
       </Snackbar>
       <Card variant="outlined">
-        <CardHeader
-          avatar={<Avatar src={postData.userImage} alt="ユーザー画像" />}
-          title={postData.name}
-          subheader={formatDate(postData.publishedAt)}
-        />
+        <Link href={`/profile/${postData.userId}`}>
+          <CardHeader
+            avatar={<Avatar src={postData.userImage} />}
+            title={postData.name}
+            subheader={formatDate(postData.publishedAt)}
+          />
+        </Link>
         {postData.postImage && (
           <CardMedia
             component="img"

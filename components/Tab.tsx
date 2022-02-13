@@ -37,29 +37,32 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-//fetcherの定義
-const url = "http://localhost:8000/post/all";
-const fetcher = () =>
-  fetch(url, {
-    credentials: "include",
-  }).then((res) => res.json());
+type props = {
+  userId: string;
+};
 
-export default function IconLabelTabs() {
+export const IconLabelTabs: React.FC<props> = (props) => {
+  const { userId } = props;
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  //swr
+  const url =
+    userId != ""
+      ? `http://localhost:8000/post/all/${userId}`
+      : "http://localhost:8000/post/all";
+  const fetcher = () =>
+    fetch(url, {
+      credentials: "include",
+    }).then((res) => res.json());
   const { data, error } = useSWR(url, fetcher);
-
-  //エラーやローディング中の処理
-  if (error) return <div>Error : {error.message}</div>;
+  if (error) return <div>このユーザはまだ投稿していません</div>;
   if (!data) return <div>Loading...</div>;
 
   return (
-    <Box sx={{ bgcolor: "background.paper" }}>
+    <Box sx={{ bgcolor: "background.paper", mt: 3 }}>
       <Tabs
         value={value}
         onChange={handleChange}
@@ -124,4 +127,4 @@ export default function IconLabelTabs() {
       </TabPanel>
     </Box>
   );
-}
+};
