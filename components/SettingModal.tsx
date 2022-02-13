@@ -13,6 +13,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useSWRConfig } from "swr";
 import { LoginUser } from "../types/loginUser";
+import { useRouter } from "next/router";
 
 type inputData = {
   userName: string;
@@ -31,6 +32,7 @@ export const SettingModal: React.FC<Props> = (props) => {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { setSnackState } = useContext(SnackbarContext);
   const { mutate } = useSWRConfig();
+  const router = useRouter();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -96,6 +98,17 @@ export const SettingModal: React.FC<Props> = (props) => {
       body: JSON.stringify(reqData),
     })
       .then((response) => {
+        if (response.status == 303) {
+          mutate(`http://localhost:8000/user/getUser/${user?.userId}`);
+          mutate("http://localhost:8000/user/loginUser");
+          setSnackState({
+            isOpen: true,
+            status: "success",
+            message: "success!!",
+          });
+          setOpen(false);
+          return response.json();
+        }
         if (!response.ok) {
           throw new Error();
         }
@@ -106,6 +119,10 @@ export const SettingModal: React.FC<Props> = (props) => {
           message: "success!!",
         });
         setOpen(false);
+      })
+      .then((data) => {
+        console.log(data);
+        router.replace(data);
       })
       .catch((error) => {
         setSnackState({ isOpen: true, status: "error", message: "error" });

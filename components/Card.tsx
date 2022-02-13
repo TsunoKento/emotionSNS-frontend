@@ -82,7 +82,7 @@ export const OutlineCard: VFC<props> = (props) => {
       <Card variant="outlined">
         <Link href={`/profile/${postData.userId}`}>
           <CardHeader
-            avatar={<Avatar src={postData.userImage} alt="ユーザー画像" />}
+            avatar={<Avatar src={postData.userImage} />}
             title={postData.name}
             subheader={formatDate(postData.publishedAt)}
           />

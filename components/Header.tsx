@@ -9,7 +9,6 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
@@ -61,11 +60,7 @@ const ResponsiveAppBar = () => {
                 </PostModal>
                 <Link href={`/profile/${loginUser.userId}`}>
                   <IconButton sx={{ mt: 1.5, mb: 2.5 }}>
-                    <Avatar
-                      src={
-                        loginUser?.image || "https://placehold.jp/150x150.png"
-                      }
-                    />
+                    <Avatar src={loginUser?.image} />
                   </IconButton>
                 </Link>
               </>
