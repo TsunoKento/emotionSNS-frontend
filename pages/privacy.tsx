@@ -2,7 +2,7 @@ import { Box, Container, Typography } from "@mui/material";
 import { NextPage } from "next";
 import Head from "next/head";
 
-const privacy: NextPage = () => {
+const Privacy: NextPage = () => {
   return (
     <Box>
       <Head>
@@ -19,7 +19,7 @@ const privacy: NextPage = () => {
           個人情報の利用目的
         </Typography>
         <Typography>
-          当アプリは、利用者からご提供いただく情報を以下の目的の範囲内において利用します。
+          当サービスは、利用者からご提供いただく情報を以下の目的の範囲内において利用します。
           <br />
           ・ご本人確認のため <br />
           ・利用規約等で禁じている行為などの調査のため
@@ -28,7 +28,7 @@ const privacy: NextPage = () => {
           個人情報の第三者への開示について
         </Typography>
         <Typography>
-          当アプリにおいて、原則的に第三者に開示・提供することはございません。ただし、次のいずれかに該当する場合、個人情報を開示・提供する場合があります。
+          当サービスにおいて、原則的に第三者に開示・提供することはございません。ただし、次のいずれかに該当する場合、個人情報を開示・提供する場合があります。
           <br />
           ・利用者の同意がある場合 <br />
           ・法令に基づき、個人情報の開示が必要となる場合
@@ -45,7 +45,7 @@ const privacy: NextPage = () => {
           本プライバシーポリシーの変更
         </Typography>
         <Typography>
-          当アプリは、本プライバシーポリシーの内容を適宜見直し、その改善に努めます。
+          当サービスは、本プライバシーポリシーの内容を適宜見直し、その改善に努めます。
           <br />
           本プライバシーポリシーは、事前の予告なく変更することがあります。
           <br />
@@ -55,11 +55,11 @@ const privacy: NextPage = () => {
           免責事項
         </Typography>
         <Typography>
-          利用上の不具合・不都合に対して可能な限りサポートを行っておりますが、利用者が本アプリを利用して生じた損害に関して、開発者は責任を負わないものとします。
+          利用上の不具合・不都合に対して可能な限りサポートを行っておりますが、利用者が当サービスを利用して生じた損害に関して、開発者は責任を負わないものとします。
         </Typography>
       </Container>
     </Box>
   );
 };
 
-export default privacy;
+export default Privacy;
