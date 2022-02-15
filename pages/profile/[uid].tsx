@@ -13,6 +13,7 @@ import { SettingModal } from "../../components/SettingModal";
 import { IconLabelTabs } from "../../components/Tab";
 import { useLoginUser } from "../../hooks/useLoginUser";
 import { LoginUser } from "../../types/loginUser";
+import Head from "next/head";
 
 const Profile: NextPage = () => {
   const { loginUser } = useLoginUser();
@@ -30,6 +31,9 @@ const Profile: NextPage = () => {
         <CircularProgress />
       ) : (
         <Box sx={{ height: 300, backgroundColor: "primary.dark" }}>
+          <Head>
+            <title>{data?.name}さんのページ</title>
+          </Head>
           {data?.userId == loginUser?.userId && (
             <Container maxWidth="xl" sx={{ position: "relative" }}>
               <SettingModal user={data}>
