@@ -1,12 +1,18 @@
+import { useCookies } from "react-cookie";
 import useSWR, { Fetcher } from "swr";
 import { LoginUser } from "../types/loginUser";
 
 export const useLoginUser = () => {
-  const url = `${process.env.API_SERVER_PATH}/user/loginUser`;
+  const [cookies] = useCookies();
+  const url = `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`;
   const fetcher: Fetcher<LoginUser> = () =>
-    fetch(url, { method: "POST", credentials: "include" }).then((res) =>
-      res.json()
-    );
+    fetch(url, {
+      headers: {
+        "X-CSRF-Token": cookies._csrf,
+      },
+      method: "POST",
+      credentials: "include",
+    }).then((res) => res.json());
   const { data, error } = useSWR(url, fetcher);
 
   return {

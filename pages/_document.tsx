@@ -31,7 +31,7 @@ export default class Document extends NextDocument {
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
         </Head>
-        <body>
+        <body style={{ paddingTop: 86 }}>
           <Main />
           <NextScript />
         </body>

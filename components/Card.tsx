@@ -18,6 +18,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Post } from "../types/post";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
+import { useCookies } from "react-cookie";
 
 type props = {
   postData: Post;
@@ -40,6 +41,7 @@ export const OutlineCard: VFC<props> = (props) => {
   const [likeCount, setLikeCount] = useState(postData.likeCount);
   const [likeFlag, setLikeFlag] = useState(postData.likeFlag);
   const { loginUser } = useLoginUser();
+  const [cookies] = useCookies();
 
   const snackClose = () => {
     setSnackOpen(false);
@@ -51,11 +53,12 @@ export const OutlineCard: VFC<props> = (props) => {
     //いいねでなって欲しい値を送る(いいねついていたら外す、いいねついていなかったら付ける)
     const req = { like: !likeFlag, postId: postData.postId };
     try {
-      await fetch(`${process.env.API_SERVER_PATH}/like`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/like`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRF-Token": cookies._csrf,
         },
         body: JSON.stringify(req),
       });

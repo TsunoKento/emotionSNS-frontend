@@ -14,6 +14,7 @@ import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useSWRConfig } from "swr";
 import { LoginUser } from "../types/loginUser";
 import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 
 type inputData = {
   userName: string;
@@ -32,6 +33,8 @@ export const SettingModal: React.FC<Props> = (props) => {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { setSnackState } = useContext(SnackbarContext);
   const { mutate } = useSWRConfig();
+  const [cookies] = useCookies();
+
   const router = useRouter();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -55,11 +58,14 @@ export const SettingModal: React.FC<Props> = (props) => {
 
   const signOutGoogle = async () => {
     try {
-      await fetch(`${process.env.API_SERVER_PATH}/user/logout`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/logout`, {
         method: "POST",
         credentials: "include",
+        headers: {
+          "X-CSRF-Token": cookies._csrf,
+        },
       });
-      mutate(`${process.env.API_SERVER_PATH}/user/loginUser`);
+      mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
       setSnackState({
         isOpen: true,
         status: "success",
@@ -89,18 +95,21 @@ export const SettingModal: React.FC<Props> = (props) => {
     if (fileUrl) {
       reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
     }
-    fetch(`${process.env.API_SERVER_PATH}/user/profile/change`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/profile/change`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRF-Token": cookies._csrf,
       },
       body: JSON.stringify(reqData),
     })
       .then((response) => {
         if (response.status == 303) {
-          mutate(`${process.env.API_SERVER_PATH}/user/getUser/${user?.userId}`);
-          mutate(`${process.env.API_SERVER_PATH}/user/loginUser`);
+          mutate(
+            `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
+          );
+          mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
           setSnackState({
             isOpen: true,
             status: "success",
@@ -112,7 +121,9 @@ export const SettingModal: React.FC<Props> = (props) => {
         if (!response.ok) {
           throw new Error();
         }
-        mutate(`${process.env.API_SERVER_PATH}/user/getUser/${user?.userId}`);
+        mutate(
+          `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
+        );
         setSnackState({
           isOpen: true,
           status: "success",

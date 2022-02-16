@@ -35,7 +35,7 @@ export const LoginModal: FC = ({ children }) => {
           <Button
             variant="contained"
             startIcon={<GoogleIcon />}
-            href={`${process.env.API_SERVER_PATH}/user/login/google`}
+            href={`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/login/google`}
           >
             Login with Google
           </Button>
