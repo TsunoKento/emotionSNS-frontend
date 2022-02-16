@@ -93,35 +93,35 @@ export const IconLabelTabs: React.FC<props> = (props) => {
       <TabPanel value={value} index={0}>
         {data.map((postData: Post) => {
           if (postData.emotionId === 1) {
-            return <OutlineCard postData={postData} />;
+            return <OutlineCard key={postData.postId} postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={1}>
         {data.map((postData: Post) => {
           if (postData.emotionId === 2) {
-            return <OutlineCard postData={postData} />;
+            return <OutlineCard key={postData.postId} postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={2}>
         {data.map((postData: Post) => {
           if (postData.emotionId === 3) {
-            return <OutlineCard postData={postData} />;
+            return <OutlineCard key={postData.postId} postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={3}>
         {data.map((postData: Post) => {
           if (postData.emotionId === 4) {
-            return <OutlineCard postData={postData} />;
+            return <OutlineCard key={postData.postId} postData={postData} />;
           }
         })}
       </TabPanel>
       <TabPanel value={value} index={4}>
         {data.map((postData: Post) => {
           if (postData.emotionId === 5) {
-            return <OutlineCard postData={postData} />;
+            return <OutlineCard key={postData.postId} postData={postData} />;
           }
         })}
       </TabPanel>

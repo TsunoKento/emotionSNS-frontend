@@ -14,7 +14,11 @@ import {
 } from "@mui/material";
 import { useState, VFC } from "react";
 import { LoginModal } from "./LoginModal";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import { Post } from "../types/post";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
@@ -72,6 +76,46 @@ export const OutlineCard: VFC<props> = (props) => {
       console.log(err);
     }
   };
+
+  const likeBuuton = () => {
+    let icon: JSX.Element;
+    switch (postData.emotionId) {
+      case 1:
+        likeFlag
+          ? (icon = <SentimentVerySatisfiedIcon sx={{ color: "coral" }} />)
+          : (icon = <SentimentVerySatisfiedIcon />);
+        break;
+      case 2:
+        likeFlag
+          ? (icon = <SentimentVeryDissatisfiedIcon sx={{ color: "red" }} />)
+          : (icon = <SentimentVeryDissatisfiedIcon />);
+        break;
+      case 3:
+        likeFlag
+          ? (icon = <SentimentDissatisfiedIcon sx={{ color: "blue" }} />)
+          : (icon = <SentimentDissatisfiedIcon />);
+        break;
+      case 4:
+        likeFlag
+          ? (icon = <SentimentSatisfiedAltIcon sx={{ color: "gold" }} />)
+          : (icon = <SentimentSatisfiedAltIcon />);
+        break;
+      case 5:
+        likeFlag
+          ? (icon = <SentimentNeutralIcon sx={{ color: "black" }} />)
+          : (icon = <SentimentNeutralIcon />);
+        break;
+      default:
+        icon = <></>;
+    }
+    return (
+      <IconButton aria-label="add to favorites" onClick={toggleLike}>
+        {icon}
+        {likeCount}
+      </IconButton>
+    );
+  };
+
   return (
     <Box>
       <Snackbar
@@ -105,17 +149,7 @@ export const OutlineCard: VFC<props> = (props) => {
         </CardContent>
         <CardActions disableSpacing>
           {loginUser?.userId ? (
-            likeFlag ? (
-              <IconButton aria-label="add to favorites" onClick={toggleLike}>
-                <FavoriteIcon />
-                {likeCount}
-              </IconButton>
-            ) : (
-              <IconButton aria-label="add to favorites" onClick={toggleLike}>
-                <FavoriteBorderIcon />
-                {likeCount}
-              </IconButton>
-            )
+            likeBuuton()
           ) : (
             <LoginModal>
               <IconButton aria-label="not login" onClick={showAlert}>
