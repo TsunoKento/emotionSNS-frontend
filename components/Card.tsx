@@ -14,10 +14,15 @@ import {
 } from "@mui/material";
 import { useState, VFC } from "react";
 import { LoginModal } from "./LoginModal";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import { Post } from "../types/post";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
+import { useCookies } from "react-cookie";
 
 type props = {
   postData: Post;
@@ -40,6 +45,7 @@ export const OutlineCard: VFC<props> = (props) => {
   const [likeCount, setLikeCount] = useState(postData.likeCount);
   const [likeFlag, setLikeFlag] = useState(postData.likeFlag);
   const { loginUser } = useLoginUser();
+  const [cookies] = useCookies();
 
   const snackClose = () => {
     setSnackOpen(false);
@@ -51,11 +57,12 @@ export const OutlineCard: VFC<props> = (props) => {
     //いいねでなって欲しい値を送る(いいねついていたら外す、いいねついていなかったら付ける)
     const req = { like: !likeFlag, postId: postData.postId };
     try {
-      await fetch("http://localhost:8000/like", {
+      await fetch(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/like`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRF-Token": cookies._csrf,
         },
         body: JSON.stringify(req),
       });
@@ -69,6 +76,46 @@ export const OutlineCard: VFC<props> = (props) => {
       console.log(err);
     }
   };
+
+  const likeBuuton = () => {
+    let icon: JSX.Element;
+    switch (postData.emotionId) {
+      case 1:
+        likeFlag
+          ? (icon = <SentimentVerySatisfiedIcon sx={{ color: "coral" }} />)
+          : (icon = <SentimentVerySatisfiedIcon />);
+        break;
+      case 2:
+        likeFlag
+          ? (icon = <SentimentVeryDissatisfiedIcon sx={{ color: "red" }} />)
+          : (icon = <SentimentVeryDissatisfiedIcon />);
+        break;
+      case 3:
+        likeFlag
+          ? (icon = <SentimentDissatisfiedIcon sx={{ color: "blue" }} />)
+          : (icon = <SentimentDissatisfiedIcon />);
+        break;
+      case 4:
+        likeFlag
+          ? (icon = <SentimentSatisfiedAltIcon sx={{ color: "gold" }} />)
+          : (icon = <SentimentSatisfiedAltIcon />);
+        break;
+      case 5:
+        likeFlag
+          ? (icon = <SentimentNeutralIcon sx={{ color: "black" }} />)
+          : (icon = <SentimentNeutralIcon />);
+        break;
+      default:
+        icon = <></>;
+    }
+    return (
+      <IconButton aria-label="add to favorites" onClick={toggleLike}>
+        {icon}
+        {likeCount}
+      </IconButton>
+    );
+  };
+
   return (
     <Box>
       <Snackbar
@@ -102,17 +149,7 @@ export const OutlineCard: VFC<props> = (props) => {
         </CardContent>
         <CardActions disableSpacing>
           {loginUser?.userId ? (
-            likeFlag ? (
-              <IconButton aria-label="add to favorites" onClick={toggleLike}>
-                <FavoriteIcon />
-                {likeCount}
-              </IconButton>
-            ) : (
-              <IconButton aria-label="add to favorites" onClick={toggleLike}>
-                <FavoriteBorderIcon />
-                {likeCount}
-              </IconButton>
-            )
+            likeBuuton()
           ) : (
             <LoginModal>
               <IconButton aria-label="not login" onClick={showAlert}>

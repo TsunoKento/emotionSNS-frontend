@@ -3,41 +3,28 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import SearchIcon from "@mui/icons-material/Search";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import { PostModal } from "./PostModal";
 import { LoginModal } from "./LoginModal";
 import LoginIcon from "@mui/icons-material/Login";
-import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
+import Image from "next/image";
+import logo from "../public/logo.jpeg";
 
 const ResponsiveAppBar = () => {
   const { loginUser } = useLoginUser();
 
-  const { setSnackState } = React.useContext(SnackbarContext);
-  const searchOpen = () => {
-    console.log("検索ボタンを押下しました");
-    setSnackState({ isOpen: true, status: "success", message: "成功" });
-  };
-
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Link href="/">
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ mr: 2, display: "flex" }}
-            >
-              LOGO
-            </Typography>
+            <Box sx={{ mr: 2, display: "flex" }}>
+              <Image src={logo} width={138} height={86} />
+            </Box>
           </Link>
 
           <Box
@@ -47,12 +34,6 @@ const ResponsiveAppBar = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Button
-              sx={{ my: 2, color: "white", display: "block" }}
-              onClick={searchOpen}
-            >
-              <SearchIcon fontSize="large" />
-            </Button>
             {loginUser?.userId ? (
               <>
                 <PostModal>
