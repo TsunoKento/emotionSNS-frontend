@@ -20,7 +20,7 @@ const Profile: NextPage = () => {
   const router = useRouter();
   const uid = router.query.uid as string;
 
-  const url = `http://localhost:8000/user/getUser/${uid}`;
+  const url = `${process.env.API_SERVER_PATH}/user/getUser/${uid}`;
   const fetcher: Fetcher<LoginUser> = () =>
     fetch(url).then((res) => res.json());
   const { data, error } = useSWR(url, fetcher);

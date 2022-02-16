@@ -51,7 +51,7 @@ export const OutlineCard: VFC<props> = (props) => {
     //いいねでなって欲しい値を送る(いいねついていたら外す、いいねついていなかったら付ける)
     const req = { like: !likeFlag, postId: postData.postId };
     try {
-      await fetch("http://localhost:8000/like", {
+      await fetch(`${process.env.API_SERVER_PATH}/like`, {
         method: "POST",
         credentials: "include",
         headers: {

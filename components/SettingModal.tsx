@@ -55,11 +55,11 @@ export const SettingModal: React.FC<Props> = (props) => {
 
   const signOutGoogle = async () => {
     try {
-      await fetch("http://localhost:8000/user/logout", {
+      await fetch(`${process.env.API_SERVER_PATH}/user/logout`, {
         method: "POST",
         credentials: "include",
       });
-      mutate("http://localhost:8000/user/loginUser");
+      mutate(`${process.env.API_SERVER_PATH}/user/loginUser`);
       setSnackState({
         isOpen: true,
         status: "success",
@@ -89,7 +89,7 @@ export const SettingModal: React.FC<Props> = (props) => {
     if (fileUrl) {
       reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
     }
-    fetch("http://localhost:8000/user/profile/change", {
+    fetch(`${process.env.API_SERVER_PATH}/user/profile/change`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -99,8 +99,8 @@ export const SettingModal: React.FC<Props> = (props) => {
     })
       .then((response) => {
         if (response.status == 303) {
-          mutate(`http://localhost:8000/user/getUser/${user?.userId}`);
-          mutate("http://localhost:8000/user/loginUser");
+          mutate(`${process.env.API_SERVER_PATH}/user/getUser/${user?.userId}`);
+          mutate(`${process.env.API_SERVER_PATH}/user/loginUser`);
           setSnackState({
             isOpen: true,
             status: "success",
@@ -112,7 +112,7 @@ export const SettingModal: React.FC<Props> = (props) => {
         if (!response.ok) {
           throw new Error();
         }
-        mutate(`http://localhost:8000/user/getUser/${user?.userId}`);
+        mutate(`${process.env.API_SERVER_PATH}/user/getUser/${user?.userId}`);
         setSnackState({
           isOpen: true,
           status: "success",

@@ -52,7 +52,7 @@ export const PostModal: React.FC = ({ children }) => {
     if (data.emotion == null) {
       data.emotion = 5;
     }
-    fetch("http://localhost:8000/post/add", {
+    fetch(`${process.env.API_SERVER_PATH}/post/add`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -64,7 +64,7 @@ export const PostModal: React.FC = ({ children }) => {
         if (!response.ok) {
           throw new Error();
         }
-        mutate("http://localhost:8000/post/all");
+        mutate(`${process.env.API_SERVER_PATH}/post/all`);
         setSnackState({
           isOpen: true,
           status: "success",

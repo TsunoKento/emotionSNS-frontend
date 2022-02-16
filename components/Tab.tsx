@@ -51,8 +51,8 @@ export const IconLabelTabs: React.FC<props> = (props) => {
 
   const url =
     userId != ""
-      ? `http://localhost:8000/post/all/${userId}`
-      : "http://localhost:8000/post/all";
+      ? `${process.env.API_SERVER_PATH}/post/all/${userId}`
+      : `${process.env.API_SERVER_PATH}/post/all`;
   const fetcher = () =>
     fetch(url, {
       credentials: "include",
