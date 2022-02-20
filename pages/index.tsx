@@ -7,7 +7,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>emotionSNS</title>
+        <title>ホーム</title>
       </Head>
       <Container>
         <IconLabelTabs userId="" />
