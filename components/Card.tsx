@@ -22,7 +22,6 @@ import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import { Post } from "../types/post";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
-import { useCookies } from "react-cookie";
 
 type props = {
   postData: Post;
@@ -45,7 +44,6 @@ export const OutlineCard: VFC<props> = (props) => {
   const [likeCount, setLikeCount] = useState(postData.likeCount);
   const [likeFlag, setLikeFlag] = useState(postData.likeFlag);
   const { loginUser } = useLoginUser();
-  const [cookies] = useCookies();
 
   const snackClose = () => {
     setSnackOpen(false);
@@ -62,7 +60,6 @@ export const OutlineCard: VFC<props> = (props) => {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": cookies._csrf,
         },
         body: JSON.stringify(req),
       });

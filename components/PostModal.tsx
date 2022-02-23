@@ -16,7 +16,6 @@ import React, { useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useSWRConfig } from "swr";
-import { useCookies } from "react-cookie";
 
 type inputData = {
   content: string;
@@ -29,7 +28,6 @@ export const PostModal: React.FC = ({ children }) => {
   const { setSnackState } = useContext(SnackbarContext);
   const handleOpen = () => setOpen(true);
   const { mutate } = useSWRConfig();
-  const [cookies] = useCookies();
   const handleClose = () => {
     setOpen(false);
   };
@@ -59,7 +57,6 @@ export const PostModal: React.FC = ({ children }) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRF-Token": cookies._csrf,
       },
       body: JSON.stringify(data),
     })
