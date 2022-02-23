@@ -66,8 +66,10 @@ export const IconLabelTabs: React.FC<props> = (props) => {
       <Tabs
         value={value}
         onChange={handleChange}
-        aria-label="icon label tabs example"
+        aria-label="icon label tabs"
         centered
+        variant="scrollable"
+        scrollButtons="auto"
       >
         <Tab
           icon={<SentimentVerySatisfiedIcon sx={{ color: "coral" }} />}
