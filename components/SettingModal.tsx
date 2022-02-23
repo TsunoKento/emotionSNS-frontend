@@ -16,7 +16,7 @@ import { LoginUser } from "../types/loginUser";
 import { useRouter } from "next/router";
 
 type inputData = {
-  userName: string;
+  userId: string;
   name: string;
 };
 
@@ -85,7 +85,7 @@ export const SettingModal: React.FC<Props> = (props) => {
     };
     const reqData: req = {
       name: data.name,
-      userId: data.userName,
+      userId: data.userId,
     };
     if (fileUrl) {
       reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
@@ -200,11 +200,11 @@ export const SettingModal: React.FC<Props> = (props) => {
             </Box>
 
             <Controller
-              name="userName"
+              name="userId"
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="USERNAME"
+                  label="ID"
                   fullWidth
                   defaultValue={user?.userId}
                   sx={{ mb: 2 }}
@@ -239,7 +239,7 @@ export const SettingModal: React.FC<Props> = (props) => {
                 mt: 1.5,
                 mx: "auto",
                 color: "white",
-                backgroundColor: "primary.dark",
+                backgroundColor: "red",
                 textAlign: "center",
               }}
               onClick={signOutGoogle}
