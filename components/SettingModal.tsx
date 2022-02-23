@@ -3,11 +3,9 @@ import {
   Box,
   Button,
   CircularProgress,
-  IconButton,
   Modal,
   TextField,
 } from "@mui/material";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import React, { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SnackbarContext } from "../contexts/SnackbarContext";
@@ -222,9 +220,9 @@ export const SettingModal: React.FC<Props> = (props) => {
                 <CircularProgress />
               </Box>
             ) : (
-              <IconButton color="primary" type="submit">
-                <ChangeCircleIcon fontSize="large" />
-              </IconButton>
+              <Button color="primary" type="submit" variant="contained">
+                変更
+              </Button>
             )}
             <Button
               sx={{
@@ -236,7 +234,7 @@ export const SettingModal: React.FC<Props> = (props) => {
               }}
               onClick={signOutGoogle}
             >
-              LOG OUT
+              ログアウト
             </Button>
           </Box>
         </form>
