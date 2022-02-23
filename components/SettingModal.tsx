@@ -99,39 +99,31 @@ export const SettingModal: React.FC<Props> = (props) => {
       body: JSON.stringify(reqData),
     })
       .then((response) => {
-        if (response.status == 303) {
-          mutate(
-            `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
-          );
-          mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
-          setSnackState({
-            isOpen: true,
-            status: "success",
-            message: "success!!",
-          });
-          setOpen(false);
-          return response.json();
-        }
-        if (!response.ok) {
-          throw new Error();
-        }
-        mutate(
-          `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
-        );
+        mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
         setSnackState({
           isOpen: true,
           status: "success",
           message: "success!!",
         });
         setOpen(false);
+        if (response.status == 303) {
+          return response.json();
+        } else {
+          mutate(
+            `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
+          );
+        }
+        if (!response.ok) {
+          throw new Error();
+        }
       })
       .then((data) => {
-        console.log(data);
-        router.replace(data);
+        if (data) {
+          router.replace(data);
+        }
       })
-      .catch((error) => {
+      .catch(() => {
         setSnackState({ isOpen: true, status: "error", message: "error" });
-        console.log(error);
       });
     setIsLoading(false);
   };
