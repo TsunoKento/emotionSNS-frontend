@@ -24,7 +24,12 @@ type inputData = {
 
 export const PostModal: React.FC = ({ children }) => {
   const [open, setOpen] = React.useState(false);
-  const { control, handleSubmit, resetField } = useForm<inputData>();
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    formState: { errors },
+  } = useForm<inputData>();
   const { setSnackState } = useContext(SnackbarContext);
   const handleOpen = () => setOpen(true);
   const { mutate } = useSWRConfig();
@@ -97,8 +102,18 @@ export const PostModal: React.FC = ({ children }) => {
       >
         <form onSubmit={handleSubmit(postDataForm)}>
           <Box sx={style}>
+            {errors.content && errors.content.type === "required" && (
+              <span style={{ color: "red" }}>{errors.content.message}</span>
+            )}
+            {errors.content && errors.content.type === "maxLength" && (
+              <span style={{ color: "red" }}>投稿内容は200文字までです</span>
+            )}
             <Controller
               name="content"
+              rules={{
+                required: "投稿内容の入力は必須です",
+                maxLength: 200,
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -107,6 +122,7 @@ export const PostModal: React.FC = ({ children }) => {
                   rows={8}
                   multiline
                   fullWidth
+                  helperText={`${field.value.length}/200`}
                 />
               )}
               control={control}

@@ -26,7 +26,11 @@ export const SettingModal: React.FC<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, children } = props;
   const [open, setOpen] = React.useState(false);
-  const { control, handleSubmit } = useForm<inputData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<inputData>();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { setSnackState } = useContext(SnackbarContext);
   const { mutate } = useSWRConfig();
@@ -74,16 +78,18 @@ export const SettingModal: React.FC<Props> = (props) => {
   };
 
   const postDataForm: SubmitHandler<inputData> = (data) => {
-    //何も変更していなければundefinedが送られてくる
     setIsLoading(true);
+
     type req = {
       image?: string;
-      name?: string;
-      userId?: string;
+      name: string;
+      userId: string;
+      isUserIdChanged: boolean;
     };
     const reqData: req = {
       name: data.name,
       userId: data.userId,
+      isUserIdChanged: data.userId !== user?.userId,
     };
     if (fileUrl) {
       reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
@@ -104,6 +110,7 @@ export const SettingModal: React.FC<Props> = (props) => {
           message: "success!!",
         });
         setOpen(false);
+        //formにdafaultvalueを設定した都合上返却値が全て303になっているのを修正する
         if (response.status == 303) {
           return response.json();
         } else {
@@ -189,31 +196,34 @@ export const SettingModal: React.FC<Props> = (props) => {
               </label>
             </Box>
 
+            {errors.userId && errors.userId.type === "required" && (
+              <span style={{ color: "red" }}>{errors.userId.message}</span>
+            )}
+            {errors.userId && errors.userId.type === "maxLength" && (
+              <span style={{ color: "red" }}>IDは30文字までです</span>
+            )}
             <Controller
               name="userId"
+              rules={{
+                required: "IDの入力は必須です",
+                maxLength: 50,
+              }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="ID"
-                  fullWidth
-                  defaultValue={user?.userId}
-                  sx={{ mb: 2 }}
-                />
+                <TextField {...field} label="ID" fullWidth sx={{ mb: 2 }} />
               )}
               control={control}
+              defaultValue={user?.userId}
             />
+
+            {errors.name && <span>{errors.name.message}</span>}
             <Controller
               name="name"
+              rules={{ required: "NAMEの入力は必須です" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="NAME"
-                  fullWidth
-                  defaultValue={user?.name}
-                  sx={{ mb: 2 }}
-                />
+                <TextField {...field} label="NAME" fullWidth sx={{ mb: 2 }} />
               )}
               control={control}
+              defaultValue={user?.name}
             />
             {isLoading ? (
               <Box sx={{ display: "flex" }}>
