@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Typography from "@mui/material/Typography";
 import {
   Alert,
@@ -105,12 +104,7 @@ export const OutlineCard: VFC<props> = (props) => {
       default:
         icon = <></>;
     }
-    return (
-      <IconButton aria-label="add to favorites" onClick={toggleLike}>
-        {icon}
-        {likeCount}
-      </IconButton>
-    );
+    return icon;
   };
 
   return (
@@ -146,11 +140,14 @@ export const OutlineCard: VFC<props> = (props) => {
         </CardContent>
         <CardActions disableSpacing>
           {loginUser?.userId ? (
-            likeBuuton()
+            <IconButton aria-label="add to favorites" onClick={toggleLike}>
+              {likeBuuton()}
+              {likeCount}
+            </IconButton>
           ) : (
             <LoginModal>
               <IconButton aria-label="not login" onClick={showAlert}>
-                <FavoriteBorderIcon />
+                {likeBuuton()}
                 {likeCount}
               </IconButton>
             </LoginModal>

@@ -67,7 +67,6 @@ export const IconLabelTabs: React.FC<props> = (props) => {
         value={value}
         onChange={handleChange}
         aria-label="icon label tabs"
-        centered
         variant="scrollable"
         scrollButtons="auto"
       >

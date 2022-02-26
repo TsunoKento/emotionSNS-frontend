@@ -3,20 +3,19 @@ import {
   Box,
   Button,
   CircularProgress,
-  IconButton,
   Modal,
   TextField,
 } from "@mui/material";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import React, { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useSWRConfig } from "swr";
 import { LoginUser } from "../types/loginUser";
 import { useRouter } from "next/router";
+import { ErrorMessage } from "../types/errorMessage";
 
 type inputData = {
-  userName: string;
+  userId: string;
   name: string;
 };
 
@@ -28,7 +27,11 @@ export const SettingModal: React.FC<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, children } = props;
   const [open, setOpen] = React.useState(false);
-  const { control, handleSubmit } = useForm<inputData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<inputData>();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { setSnackState } = useContext(SnackbarContext);
   const { mutate } = useSWRConfig();
@@ -75,65 +78,71 @@ export const SettingModal: React.FC<Props> = (props) => {
     }
   };
 
-  const postDataForm: SubmitHandler<inputData> = (data) => {
-    //何も変更していなければundefinedが送られてくる
-    setIsLoading(true);
-    type req = {
-      image?: string;
-      name?: string;
-      userId?: string;
-    };
-    const reqData: req = {
-      name: data.name,
-      userId: data.userName,
-    };
-    if (fileUrl) {
-      reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
-    }
-    fetch(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/profile/change`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reqData),
-    })
-      .then((response) => {
-        if (response.status == 303) {
-          mutate(
-            `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
-          );
-          mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
-          setSnackState({
-            isOpen: true,
-            status: "success",
-            message: "success!!",
-          });
-          setOpen(false);
-          return response.json();
+  const postDataForm: SubmitHandler<inputData> = async (data) => {
+    try {
+      setIsLoading(true);
+
+      type req = {
+        image?: string;
+        name: string;
+        userId: string;
+        isUserIdChanged: boolean;
+      };
+      const reqData: req = {
+        name: data.name,
+        userId: data.userId,
+        isUserIdChanged: data.userId !== user?.userId,
+      };
+      if (fileUrl) {
+        reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/profile/change`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reqData),
         }
-        if (!response.ok) {
-          throw new Error();
-        }
+      );
+
+      type resData = {
+        url: string;
+        message: string;
+      };
+      const resdata: resData | ErrorMessage = await response.json();
+
+      mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
+      if (response.status == 303 && "url" in resdata) {
+        setOpen(false);
+        router.replace(resdata.url);
+      } else if (!response.ok) {
+        throw new Error(resdata.message);
+      } else {
+        setOpen(false);
         mutate(
           `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
         );
+      }
+      setSnackState({
+        isOpen: true,
+        status: "success",
+        message: resdata.message,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
         setSnackState({
           isOpen: true,
-          status: "success",
-          message: "success!!",
+          status: "error",
+          message: error.message,
         });
-        setOpen(false);
-      })
-      .then((data) => {
-        console.log(data);
-        router.replace(data);
-      })
-      .catch((error) => {
-        setSnackState({ isOpen: true, status: "error", message: "error" });
-        console.log(error);
-      });
-    setIsLoading(false);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const imageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,52 +208,55 @@ export const SettingModal: React.FC<Props> = (props) => {
               </label>
             </Box>
 
+            {errors.userId && errors.userId.type === "required" && (
+              <span style={{ color: "red" }}>{errors.userId.message}</span>
+            )}
+            {errors.userId && errors.userId.type === "maxLength" && (
+              <span style={{ color: "red" }}>IDは30文字までです</span>
+            )}
             <Controller
-              name="userName"
+              name="userId"
+              rules={{
+                required: "IDの入力は必須です",
+                maxLength: 50,
+              }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="USERNAME"
-                  fullWidth
-                  defaultValue={user?.userId}
-                  sx={{ mb: 2 }}
-                />
+                <TextField {...field} label="ID" fullWidth sx={{ mb: 2 }} />
               )}
               control={control}
+              defaultValue={user?.userId}
             />
+
+            {errors.name && <span>{errors.name.message}</span>}
             <Controller
               name="name"
+              rules={{ required: "NAMEの入力は必須です" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="NAME"
-                  fullWidth
-                  defaultValue={user?.name}
-                  sx={{ mb: 2 }}
-                />
+                <TextField {...field} label="NAME" fullWidth sx={{ mb: 2 }} />
               )}
               control={control}
+              defaultValue={user?.name}
             />
             {isLoading ? (
               <Box sx={{ display: "flex" }}>
                 <CircularProgress />
               </Box>
             ) : (
-              <IconButton color="primary" type="submit">
-                <ChangeCircleIcon fontSize="large" />
-              </IconButton>
+              <Button color="primary" type="submit" variant="contained">
+                変更
+              </Button>
             )}
             <Button
               sx={{
                 mt: 1.5,
                 mx: "auto",
                 color: "white",
-                backgroundColor: "primary.dark",
+                backgroundColor: "red",
                 textAlign: "center",
               }}
               onClick={signOutGoogle}
             >
-              LOG OUT
+              ログアウト
             </Button>
           </Box>
         </form>
