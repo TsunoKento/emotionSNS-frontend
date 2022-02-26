@@ -68,7 +68,13 @@ export const IconLabelTabs: React.FC<props> = (props) => {
         onChange={handleChange}
         aria-label="icon label tabs"
         variant="scrollable"
-        scrollButtons="auto"
+        sx={{
+          "& .MuiTabs-flexContainer": {
+            justifyContent: {
+              sm: "center",
+            },
+          },
+        }}
       >
         <Tab
           icon={<SentimentVerySatisfiedIcon sx={{ color: "coral" }} />}
