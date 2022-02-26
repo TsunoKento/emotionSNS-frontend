@@ -122,7 +122,9 @@ export const PostModal: React.FC = ({ children }) => {
                   rows={8}
                   multiline
                   fullWidth
-                  helperText={`${field.value.length}/200`}
+                  helperText={
+                    field.value ? `${field.value.length}/200` : "0/200"
+                  }
                 />
               )}
               control={control}
