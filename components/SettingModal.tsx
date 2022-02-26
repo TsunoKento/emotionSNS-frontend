@@ -12,6 +12,7 @@ import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useSWRConfig } from "swr";
 import { LoginUser } from "../types/loginUser";
 import { useRouter } from "next/router";
+import { ErrorMessage } from "../types/errorMessage";
 
 type inputData = {
   userId: string;
@@ -77,60 +78,71 @@ export const SettingModal: React.FC<Props> = (props) => {
     }
   };
 
-  const postDataForm: SubmitHandler<inputData> = (data) => {
-    setIsLoading(true);
+  const postDataForm: SubmitHandler<inputData> = async (data) => {
+    try {
+      setIsLoading(true);
 
-    type req = {
-      image?: string;
-      name: string;
-      userId: string;
-      isUserIdChanged: boolean;
-    };
-    const reqData: req = {
-      name: data.name,
-      userId: data.userId,
-      isUserIdChanged: data.userId !== user?.userId,
-    };
-    if (fileUrl) {
-      reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
-    }
-    fetch(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/profile/change`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reqData),
-    })
-      .then((response) => {
-        mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
+      type req = {
+        image?: string;
+        name: string;
+        userId: string;
+        isUserIdChanged: boolean;
+      };
+      const reqData: req = {
+        name: data.name,
+        userId: data.userId,
+        isUserIdChanged: data.userId !== user?.userId,
+      };
+      if (fileUrl) {
+        reqData.image = fileUrl.replace(/data:.*\/.*;base64,/, "");
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/profile/change`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reqData),
+        }
+      );
+
+      type resData = {
+        url: string;
+        message: string;
+      };
+      const resdata: resData | ErrorMessage = await response.json();
+
+      mutate(`${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/loginUser`);
+      if (response.status == 303 && "url" in resdata) {
+        setOpen(false);
+        router.replace(resdata.url);
+      } else if (!response.ok) {
+        throw new Error(resdata.message);
+      } else {
+        setOpen(false);
+        mutate(
+          `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
+        );
+      }
+      setSnackState({
+        isOpen: true,
+        status: "success",
+        message: resdata.message,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
         setSnackState({
           isOpen: true,
-          status: "success",
-          message: "success!!",
+          status: "error",
+          message: error.message,
         });
-        setOpen(false);
-        //formにdafaultvalueを設定した都合上返却値が全て303になっているのを修正する
-        if (response.status == 303) {
-          return response.json();
-        } else {
-          mutate(
-            `${process.env.NEXT_PUBLIC_API_SERVER_DOMAIN}/user/getUser/${user?.userId}`
-          );
-        }
-        if (!response.ok) {
-          throw new Error();
-        }
-      })
-      .then((data) => {
-        if (data) {
-          router.replace(data);
-        }
-      })
-      .catch(() => {
-        setSnackState({ isOpen: true, status: "error", message: "error" });
-      });
-    setIsLoading(false);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const imageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
