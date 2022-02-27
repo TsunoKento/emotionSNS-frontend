@@ -23,7 +23,7 @@ git clone https://github.com/TsunoKento/emotionSNS-frontend.git
 2. イメージをビルドする
 
 ```zsh
-docker-compose build
+cd emotionSNS-frontend && docker-compose build
 ```
 
 3. コンテナを起動する
