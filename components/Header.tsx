@@ -12,7 +12,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import { useLoginUser } from "../hooks/useLoginUser";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../public/logo.jpeg";
 
 const ResponsiveAppBar = () => {
   const { loginUser } = useLoginUser();
@@ -23,7 +22,7 @@ const ResponsiveAppBar = () => {
         <Toolbar disableGutters>
           <Link href="/">
             <Box sx={{ mr: 2, display: "flex" }}>
-              <Image src={logo} width={138} height={86} />
+              <img src="/logo.jpeg" width={138} height={86} />
             </Box>
           </Link>
 
